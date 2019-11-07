@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {BookListItem} from '../book-list-item';
 import {connect} from 'react-redux';
 import {withBookStoreService} from '../HOC';
-import {booksLoaded, booksRequested, booksError} from '../../actions';
+import {fetchBooks} from '../../actions';
 
 import {Spinner} from '../Spinner';
 
@@ -19,20 +19,20 @@ class BookList extends Component {
     render() {
         const {books, loading, error} = this.props;
 
-        if(loading) {
-            return <Spinner />
+        if (loading) {
+            return <Spinner/>
         }
 
-        if(error) {
-            return <ErrorIndicator />
+        if (error) {
+            return <ErrorIndicator/>
         }
 
-        return(
+        return (
             <ul className={'book-list'}>
                 {
                     books.map((book) => {
-                        return(
-                            <li key={book.id}><BookListItem book={book} /></li>
+                        return (
+                            <li key={book.id}><BookListItem book={book}/></li>
                         )
                     })
                 }
@@ -49,17 +49,9 @@ const mapStateToProps = (state) => {
     }
 };
 
-const mapDispatchToProps =(dispatch, ownProps) => {
-
-    const {bookStoreService} = ownProps;
-
+const mapDispatchToProps = (dispatch, {bookStoreService}) => {
     return {
-        fetchBooks: () => {
-            dispatch(booksRequested());
-            bookStoreService.getBooks()
-                .then((data) => dispatch(booksLoaded(data)))
-                .catch((err) => dispatch(booksError(err)));
-        }
+        fetchBooks: fetchBooks(bookStoreService, dispatch)
     }
 };
 
